@@ -1,4 +1,5 @@
 import {
+  Link,
   Links,
   LiveReload,
   Meta,
@@ -6,6 +7,8 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+
+import "./index.css";
 
 export default function App() {
   return (
@@ -16,7 +19,12 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="overflow-hidden h-screen">
+        <h1 className="font-bold text-2xl mx-auto sticky top-0 bg-[#FB1B1B] text-white border-b border-b-gray-400 w-full text-center py-2 z-50">
+          <Link to={`/`} unstable_viewTransition className="text-white">
+            RemixDex Evolutions
+          </Link>
+        </h1>
         <Outlet />
         <ScrollRestoration />
         <Scripts />

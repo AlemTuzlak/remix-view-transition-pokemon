@@ -1,10 +1,7 @@
 import { LoaderFunctionArgs, json, type MetaFunction } from "@remix-run/node";
-import {
-  Link,
-  unstable_useViewTransitionState,
-  useLoaderData,
-} from "@remix-run/react";
-import { Image } from "~/Image";
+import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
+import { LinkAndImageTransition } from "~/components/LinkAndImageTransition";
+import { getPokemonInfo } from "~/pokemon";
 
 export const meta: MetaFunction = () => {
   return [
@@ -12,65 +9,48 @@ export const meta: MetaFunction = () => {
     { name: "description", content: "Welcome to Remix!" },
   ];
 };
-// Function to get information about a Pokemon and its forms
-async function getPokemonInfo(pokemonName: string) {
-  try {
-    // Make a request to get information about the specified Pokemon
-    const pokemonResponse = await fetch(
-      `https://pokeapi.co/api/v2/pokemon/${pokemonName.toLowerCase()}/`
-    );
-    const pokemonData = await pokemonResponse.json();
-
-    return {
-      name: pokemonData.name,
-      url: pokemonData.url,
-      image: pokemonData.sprites["front_default"],
-      type: pokemonData.types.map((type: any) => type.type.name).join(", "),
-      id: pokemonData.id,
-    };
-  } catch (error) {
-    console.error(`Error: ${(error as any).message}`);
-  }
-}
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const info = await getPokemonInfo(params.pokemon!);
+  const pokemon = await getPokemonInfo(params.pokemon!);
 
-  return json({ info });
+  return json({ pokemon });
 };
 
 export default function Index() {
-  const data = useLoaderData<typeof loader>();
+  const { pokemon } = useLoaderData<typeof loader>();
+  const evolutions = pokemon?.evolutions ?? [];
+  const url = useLocation().pathname;
+  const isInfoPage = url.includes("info");
+
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <Link to={"/"} unstable_viewTransition>
-        <Image url={`/`} style={{ height: "300px" }} data={data.info} />
-      </Link>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
+      <div className="flex w-full justify-between h-64 border-b-gray-200 border-b">
+        {evolutions.map((evolution) => {
+          const sameName = evolution.name === pokemon?.name;
+          const transitionTo =
+            // if we're not on the info page and we're clicking the selected pokemon, go to the main page
+            !isInfoPage && sameName
+              ? "/"
+              : sameName
+              ? // If we're on info page and we're clicking the selected pokemon, go to the evolution page
+                `/pokemon/${evolution.name}`
+              : // Otherwise, go to the info page
+                `/pokemon/${evolution.name}/info`;
+          return (
+            <LinkAndImageTransition
+              key={evolution.name}
+              to={transitionTo}
+              imgProps={{
+                src: evolution.image,
+                transitionName: evolution.name,
+                className: sameName ? "opacity-100" : "opacity-50",
+              }}
+            />
+          );
+        })}
+      </div>
+
+      <Outlet />
     </div>
   );
 }
