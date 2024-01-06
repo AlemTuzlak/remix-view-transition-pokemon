@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   const pokemon = await getPokemonInfo(params.pokemon!);
 
   return json({ pokemon });

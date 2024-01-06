@@ -30,7 +30,7 @@ export default function Index() {
         {evolutions.map((evolutions, i) => (
           <div
             key={i}
-            className=" flex items-center w-[49%] justify-center rounded-md shadow-sm drop-shadow-lg border border-gray-100"
+            className=" flex items-center w-[49%] justify-between rounded-md shadow-sm drop-shadow-lg border border-gray-100"
           >
             {evolutions.map((pokemon) => (
               <LinkAndImageTransition
