@@ -9,9 +9,7 @@ export const Image = ({
   style?: any;
   url: string;
 }) => {
-  const isTransitioning = unstable_useViewTransitionState(url, {
-    relative: "route",
-  });
+  const isTransitioning = unstable_useViewTransitionState(url);
 
   return (
     <img
