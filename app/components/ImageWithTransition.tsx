@@ -20,9 +20,8 @@ export const ImageWithTransition = ({
       {...props}
       style={{
         ...(isTransitioning && {
-          viewTransitionName: isTransitioning ? transitionName : "",
+          viewTransitionName: transitionName,
         }),
-
         height: "200px",
         ...style,
       }}
