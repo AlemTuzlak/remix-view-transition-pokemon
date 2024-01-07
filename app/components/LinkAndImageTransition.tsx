@@ -18,7 +18,6 @@ const LinkAndImageTransition = ({
   return (
     <Link to={to} className={className} unstable_viewTransition>
       <ImageWithTransition to={to} {...imgProps} />
-
       {withTitle && (
         <h2 className="text-lg font-semibold">{imgProps.transitionName}</h2>
       )}
